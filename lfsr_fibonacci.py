@@ -47,8 +47,22 @@ class LFSR_Fibonacci:
     def restablecer_estado(self):
         self.estado = list(self.estado_inicial)
 
-    
+    def verificar_periodo_maximo(self) -> dict:    
+        # Restablecemos al estado inicial para comprobar si la secuencia generada alcanza el periodo máximo
+        self.restablecer_estado()
+        periodo_maximo = (2 ** self.n) - 1
 
+        # Generamos 2^n para verificar si se repite el estado inicial
+        secuencia = self.generar_secuencia(periodo_maximo + 1)
+
+        periodo = periodo_maximo
+        for pos in range (1, periodo_maximo + 1):
+            # Verificamos si el estado inicial se repite en la secuencia generada
+            if secuencia[pos] == self.estado_inicial[0] and secuencia[pos:pos+self.n] == self.estado_inicial:
+                periodo = pos
+                break
+
+        return {"periodo_maximo": periodo_maximo, "periodo_encontrado": periodo, "es_maximo": periodo == periodo_maximo}
 
 if __name__ == "__main__":
     # Caso de uso
@@ -63,11 +77,14 @@ if __name__ == "__main__":
         print(f"Salida: {output}, Estado después del desplazamiento: {lfsr.estado}")
 
     # Permite continuar la secuencia de generación hasta el estado inicial para verificar el ciclo completo
-    secuencia = lfsr.generar_secuencia(63)
+    secuencia = lfsr.generar_secuencia(21)
     print(f"Secuencia generada: {secuencia}")
 
     lfsr.restablecer_estado()
     secuencia_rest = lfsr.generar_secuencia(10)
     print(f"Secuencia después de restablecer el estado: {secuencia_rest}")
+
+    resultado = lfsr.verificar_periodo_maximo()
+    print(f"Resultados del verificación de periodo máximo: {resultado}")
 
     print("LFSR Fibonacci creado con éxito.")
