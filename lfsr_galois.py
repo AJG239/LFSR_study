@@ -1,4 +1,4 @@
-class LFSR_Fibonacci:
+class LFSR_Galois:
     def __init__(self, polinomio: list[int], estado_inicial: list[int]):
         # Longitud del LFSR
         self.n = max(polinomio)
@@ -23,20 +23,7 @@ class LFSR_Fibonacci:
         self.polinomio = sorted(polinomio, reverse=True)
 
     def avance_LFSR(self) -> int:
-        # El bit de salida es el primer bit (x^n)
-        output_bit = self.estado[0]
-
-        # El elemento x^0 (XOR de los bits en las posiciones de los frames)
-        constante = self.estado[0] 
-        for frame in self.frames:
-            constante ^= self.estado[frame]  # XOR con los bits correspondientes a los frames
-
-        # Desplazamos el estado a la izquierda
-        for i in range(self.n - 1):
-            self.estado[i] = self.estado[i + 1]
-        self.estado[-1] = constante  # El nuevo bit de entrada es la constante calculada
-
-        return output_bit
+       return 0
 
     def generar_secuencia(self, longitud: int) -> list[int]:
         secuencia = []
@@ -80,7 +67,7 @@ if __name__ == "__main__":
     polinomio = [5, 3, 0]  # x^5 + x^3 + 1
     estado_inicial = [1, 0, 0, 0, 0]  # Estado inicial (debe tener 5 bits), el primer bit es el más significativo (x^5)
     
-    lfsr = LFSR_Fibonacci(polinomio, estado_inicial)
+    lfsr = LFSR_Galois(polinomio, estado_inicial)
 
     print(f"Polinomio de retroalimentación: {lfsr.representacion_polinmio()}")
 
@@ -100,4 +87,4 @@ if __name__ == "__main__":
     resultado = lfsr.verificar_periodo_maximo()
     print(f"Resultados del verificación de periodo máximo: {resultado}")
 
-    print("LFSR Fibonacci creado con éxito.")
+    print("LFSR Galois creado con éxito.")
