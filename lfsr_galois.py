@@ -1,5 +1,5 @@
 class LFSR_Galois:
-    def __init__(self, polinomio: list[int], estado_inicial: list[int]):
+    def __init__(self, polinomio: list[int], estado_inicial: list[int], lsb: bool = False):
         # Longitud del LFSR
         self.n = max(polinomio)
 
@@ -21,24 +21,23 @@ class LFSR_Galois:
 
         # Guardamos el polinomio
         self.polinomio = sorted(polinomio, reverse=True)
+        self.lsb = lsb
 
     def avance_LFSR(self) -> int:
-        # El bit de salida es el bit más a la derecha (menos significativo)
-        bit_salida = self.estado[-1]
+        # Bit de salida
+        output_bit = self.estado[-1]
 
-        # Calculamos el nuevo bit de entrada usando XOR de los bits indicados por el polinomio
-        nuevo_bit = 0
-        for grado in self.frames:
-            nuevo_bit ^= self.estado[-grado]
+        # Nuevo estado: desplazar a la derecha, insertar bit de salida por izquierda
+        nuevo_estado = [output_bit] + self.estado[:-1]
 
-        # Desplazamos todos los bits a la derecha
-        for i in range(self.n - 1, 0, -1):
-            self.estado[i] = self.estado[i - 1]
+        # Si el bit de salida es 1, aplicar XOR en las posiciones tap
+        if output_bit == 1:
+            for frame in self.frames:
+                nuevo_estado[self.n - frame] ^= 1
 
-        # Insertamos el nuevo bit al inicio del estado
-        self.estado[0] = nuevo_bit
-
-        return bit_salida
+        # Actualizamos el estado
+        self.estado = nuevo_estado
+        return output_bit
 
     def generar_secuencia(self, longitud: int) -> list[int]:
         secuencia = []
@@ -79,8 +78,8 @@ class LFSR_Galois:
 
 if __name__ == "__main__":
     # Caso de uso
-    polinomio = [5, 3, 0]  # x^5 + x^3 + 1
-    estado_inicial = [1, 0, 0, 0, 0]  # Estado inicial (debe tener 5 bits), el primer bit es el más significativo (x^5)
+    polinomio = [4, 1, 0]  # x^5 + x^3 + 1
+    estado_inicial = [1, 0, 0, 0]  # Estado inicial (debe tener 5 bits), el primer bit es el más significativo (x^5)
     
     lfsr = LFSR_Galois(polinomio, estado_inicial)
 
@@ -96,7 +95,7 @@ if __name__ == "__main__":
     print(f"Secuencia generada: {secuencia}")
 
     lfsr.restablecer_estado()
-    secuencia_rest = lfsr.generar_secuencia(10)
+    secuencia_rest = lfsr.generar_secuencia(15)
     print(f"Secuencia después de restablecer el estado: {secuencia_rest}")
 
     resultado = lfsr.verificar_periodo_maximo()

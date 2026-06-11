@@ -24,19 +24,17 @@ class LFSR_Fibonacci:
         self.lsb = lsb
 
     def avance_LFSR(self) -> int:
-        # El bit de salida es el primer bit (x^n)
-        output_bit = self.estado[0]
+        # El bit de salida es el primer bit (x^0)
+        output_bit = self.estado[-1]
 
         # El elemento x^0 (XOR de los bits en las posiciones de los frames)
-        constante = self.estado[0] 
+        constante = self.estado[-1] 
         for frame in self.frames:
-            constante ^= self.estado[frame]  # XOR con los bits correspondientes a los frames
+            constante ^= self.estado[self.n - 1 - frame]  # XOR con los bits correspondientes a los frames
 
-        # Desplazamos el estado a la izquierda
-        for i in range(self.n - 1):
-            self.estado[i] = self.estado[i + 1]
-        self.estado[-1] = constante  # El nuevo bit de entrada es la constante calculada
-
+        # Desplazamos el estado a la derecha
+        self.estado = [constante] + self.estado[:-1]
+    
         return output_bit
 
     def generar_secuencia(self, longitud: int) -> list[int]:
@@ -80,7 +78,7 @@ if __name__ == "__main__":
     # Caso de uso
     polinomio = [5, 3, 0]  # x^5 + x^3 + 1
     estado_inicial = [1, 0, 0, 0, 0]  # Estado inicial (debe tener 5 bits), el primer bit es el más significativo (x^5)
-    
+
     lfsr = LFSR_Fibonacci(polinomio, estado_inicial)
 
     print(f"Polinomio de retroalimentación: {lfsr.representacion_polinmio()}")
@@ -95,7 +93,7 @@ if __name__ == "__main__":
     print(f"Secuencia generada: {secuencia}")
 
     lfsr.restablecer_estado()
-    secuencia_rest = lfsr.generar_secuencia(10)
+    secuencia_rest = lfsr.generar_secuencia(7)
     print(f"Secuencia después de restablecer el estado: {secuencia_rest}")
 
     resultado = lfsr.verificar_periodo_maximo()

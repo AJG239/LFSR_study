@@ -25,7 +25,8 @@ def berlekamp_massey(secuencia: list[int]) -> dict:
 
         discrepancia = secuencia[i]  # El bit actual de la secuencia
         for j in range(1, complejidad_lineal + 1):
-            discrepancia ^= (polinomio_retroalimentacion[j] & secuencia[i - j])  # XOR para calcular la discrepancia
+            if i - j >= 0: # Asegurarse de no acceder a índices negativos
+                discrepancia ^= (polinomio_retroalimentacion[j] & secuencia[i - j])  # XOR para calcular la discrepancia
 
         if discrepancia == 0:
             pasos += 1
@@ -55,14 +56,14 @@ def berlekamp_massey(secuencia: list[int]) -> dict:
 
 if __name__ == "__main__":
     # Ejemplo de uso
-    secuencia = [1, 0, 0, 0, 0, 1, 0, 1, 0, 1]  # Secuencia de bits de ejemplo
+    secuencia = [0, 0, 0, 0, 1, 0, 1]  # Secuencia de bits de ejemplo
     resultado = berlekamp_massey(secuencia)
     print("Complejidad Lineal:", resultado["complejidad_lineal"])
     print("Polinomio Resultante:", resultado["polinomio"])
     print("Pasos:", resultado["pasos"])
     print("Cambios de Discrepancia:", resultado["cambios_discrepancia"])
     
-    if resultado['polinomio'] == [1, 0, 1, 0, 0, 0]:  # Polinomio x^2 + 1
+    if resultado['polinomio'] == [1, 0, 1, 0, 0, 1]: 
         print("El polinomio resultante es el mismo que el polinomio de retroalimentación utilizado en el LFSR.")
     else:
         print("El polinomio resultante no coincide con el polinomio de retroalimentación utilizado en el LFSR.")
