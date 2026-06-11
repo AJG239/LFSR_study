@@ -43,6 +43,11 @@ class LFSR_Fibonacci:
         for i in range(longitud):
             secuencia.append(self.avance_LFSR())
         return secuencia
+    
+    def restablecer_estado(self):
+        self.estado = list(self.estado_inicial)
+
+    
 
 
 if __name__ == "__main__":
@@ -58,7 +63,11 @@ if __name__ == "__main__":
         print(f"Salida: {output}, Estado después del desplazamiento: {lfsr.estado}")
 
     # Permite continuar la secuencia de generación hasta el estado inicial para verificar el ciclo completo
-    secuencia = lfsr.generar_secuencia(64)
+    secuencia = lfsr.generar_secuencia(63)
     print(f"Secuencia generada: {secuencia}")
+
+    lfsr.restablecer_estado()
+    secuencia_rest = lfsr.generar_secuencia(10)
+    print(f"Secuencia después de restablecer el estado: {secuencia_rest}")
 
     print("LFSR Fibonacci creado con éxito.")
