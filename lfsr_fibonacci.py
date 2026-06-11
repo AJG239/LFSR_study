@@ -1,5 +1,5 @@
 class LFSR_Fibonacci:
-    def __init__(self, polinomio: list[int], estado_inicial: list[int]):
+    def __init__(self, polinomio: list[int], estado_inicial: list[int], lsb: bool = False):
         # Longitud del LFSR
         self.n = max(polinomio)
 
@@ -21,19 +21,21 @@ class LFSR_Fibonacci:
 
         # Guardamos el polinomio
         self.polinomio = sorted(polinomio, reverse=True)
+        self.lsb = lsb
 
     def avance_LFSR(self) -> int:
-        # El bit de salida es el bit menos significativo (el último bit del estado)
-        output_bit = self.estado[-1]
+        # El bit de salida es el primer bit (x^n)
+        output_bit = self.estado[0]
 
         # El elemento x^0 (XOR de los bits en las posiciones de los frames)
-        constante = self.estado[-1] 
+        constante = self.estado[0] 
         for frame in self.frames:
-            constante ^= self.estado[self.n - 1 - frame]  # XOR con los bits correspondientes a los frames
+            constante ^= self.estado[frame]  # XOR con los bits correspondientes a los frames
 
         # Desplazamos el estado a la izquierda
         for i in range(self.n - 1):
             self.estado[i] = self.estado[i + 1]
+        self.estado[-1] = constante  # El nuevo bit de entrada es la constante calculada
 
         return output_bit
 
