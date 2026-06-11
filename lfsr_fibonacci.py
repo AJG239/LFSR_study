@@ -22,10 +22,43 @@ class LFSR_Fibonacci:
         # Guardamos el polinomio
         self.polinomio = sorted(polinomio, reverse=True)
 
+    def avance_LFSR(self) -> int:
+        # El bit de salida es el primer bit (x^n)
+        output_bit = self.estado[0]
+
+        # El elemento x^0 (XOR de los bits en las posiciones de los frames)
+        constante = self.estado[0] 
+        for frame in self.frames:
+            constante ^= self.estado[frame]  # XOR con los bits correspondientes a los frames
+
+        # Desplazamos el estado a la izquierda
+        for i in range(self.n - 1):
+            self.estado[i] = self.estado[i + 1]
+        self.estado[-1] = constante  # El nuevo bit de entrada es la constante calculada
+
+        return output_bit
+
+    def generar_secuencia(self, longitud: int) -> list[int]:
+        secuencia = []
+        for i in range(longitud):
+            secuencia.append(self.avance_LFSR())
+        return secuencia
+
+
 if __name__ == "__main__":
     # Caso de uso
     polinomio = [5, 3, 0]  # x^5 + x^3 + 1
-    estado_inicial = [1, 0, 0, 0, 0]  # Estado inicial (debe tener 5 bits)
+    estado_inicial = [1, 0, 0, 0, 0]  # Estado inicial (debe tener 5 bits), el primer bit es el más significativo (x^5)
     
     lfsr = LFSR_Fibonacci(polinomio, estado_inicial)
+
+    print(f"Estado inicial: {lfsr.estado}")
+    for i in range(10):
+        output = lfsr.avance_LFSR()
+        print(f"Salida: {output}, Estado después del desplazamiento: {lfsr.estado}")
+
+    # Permite continuar la secuencia de generación hasta el estado inicial para verificar el ciclo completo
+    secuencia = lfsr.generar_secuencia(64)
+    print(f"Secuencia generada: {secuencia}")
+
     print("LFSR Fibonacci creado con éxito.")
