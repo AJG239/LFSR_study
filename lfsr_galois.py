@@ -23,7 +23,22 @@ class LFSR_Galois:
         self.polinomio = sorted(polinomio, reverse=True)
 
     def avance_LFSR(self) -> int:
-       return 0
+        # El bit de salida es el bit más a la derecha (menos significativo)
+        bit_salida = self.estado[-1]
+
+        # Calculamos el nuevo bit de entrada usando XOR de los bits indicados por el polinomio
+        nuevo_bit = 0
+        for grado in self.frames:
+            nuevo_bit ^= self.estado[-grado]
+
+        # Desplazamos todos los bits a la derecha
+        for i in range(self.n - 1, 0, -1):
+            self.estado[i] = self.estado[i - 1]
+
+        # Insertamos el nuevo bit al inicio del estado
+        self.estado[0] = nuevo_bit
+
+        return bit_salida
 
     def generar_secuencia(self, longitud: int) -> list[int]:
         secuencia = []
