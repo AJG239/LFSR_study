@@ -47,11 +47,31 @@ def berlekamp_massey(secuencia: list[int]) -> dict:
     
     polinomio_resultante = polinomio_retroalimentacion[:complejidad_lineal + 1]  # El polinomio resultante es el polinomio de retroalimentación hasta la complejidad lineal
 
+    exponentes = []
+    for i, c in enumerate(polinomio_resultante):
+        if c == 1:
+            exponentes.append(complejidad_lineal - i)
+
+    exponentes.sort(reverse=True)
+
+    # Representación legible
+    polinomio_legible = []
+    for exp in exponentes:
+        if exp == 0:
+            polinomio_legible.append("1")
+        elif exp == 1:
+            polinomio_legible.append("x")
+        else:
+            polinomio_legible.append(f"x^{exp}")
+    polinomio_legible_str = " + ".join(polinomio_legible) if polinomio_legible else "0"
+
+
     return {
         "complejidad_lineal": complejidad_lineal,
         "polinomio": polinomio_resultante,
         "pasos": pasos,
-        "cambios_discrepancia": cambios_discrepancia
+        "cambios_discrepancia": cambios_discrepancia,
+        "polinomio_legible": polinomio_legible_str
     }
 
 if __name__ == "__main__":
@@ -62,7 +82,7 @@ if __name__ == "__main__":
     print("Polinomio Resultante:", resultado["polinomio"])
     print("Pasos:", resultado["pasos"])
     print("Cambios de Discrepancia:", resultado["cambios_discrepancia"])
-    
+    print("Polinomio Legible:", resultado["polinomio_legible"])
     if resultado['polinomio'] == [1, 0, 1, 0, 0, 1]: 
         print("El polinomio resultante es el mismo que el polinomio de retroalimentación utilizado en el LFSR.")
     else:
