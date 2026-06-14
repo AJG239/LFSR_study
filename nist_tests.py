@@ -60,13 +60,16 @@ def test_de_frecuencia_por_bloques(secuencia: list[int], tam_boque: int = 128) -
     num_bloques = longitud // tam_boque
 
     if num_bloques == 0:
-        raise ValueError("La secuencia es demasiado corta para el tamaño de bloque especificado.")
+        return {
+            "test": "Frecuencia por bloque",
+            "error": "La secuencia es demasiado corta para el tamaño de bloque especificado."
+        }
 
-    proporciones = []
+    chi_cuadrado = 0.0
     for i in range(num_bloques):
         bloque = secuencia[i * tam_boque:(i + 1) * tam_boque]
         prob = sum(bloque) / tam_boque
-        proporciones.append(sum(bloque) / tam_boque)
+        chi_cuadrado += (prob - 0.5) ** 2
 
     chi_cuadrado *= 4 * tam_boque
     p_valor = _igamc(num_bloques / 2.0, chi_cuadrado / 2.0)
@@ -87,7 +90,10 @@ def test_rachas(secuencia: list[int]) -> dict:
     tau = 2 / math.sqrt(longitud)
 
     if abs(pi - 0.5) >= tau:
-        raise ValueError("Proporcion demasiado sesgada")
+        return {
+            "test": "Test de rachas",
+            "error": "Sesgo elevado"
+        }
     
     contador = 1
     for i in range(1, longitud):
@@ -103,7 +109,7 @@ def test_rachas(secuencia: list[int]) -> dict:
         p_valor = math.erfc(numerador / denominador)
 
     return {
-        "test": "Frecuencia por Bloques",
+        "test": "Test de rachas",
         "contador_de_rachas": contador,
         "p_value": p_valor,
         "passed": p_valor >= ALPHA,
@@ -114,7 +120,10 @@ def test_de_racha_mas_larga(secuencia: list[int]) -> dict:
     
     # Parámetros de cálculo con respecto a la longitud de la secuencia
     if longitud < 128:
-        raise ValueError("La secuencia es demasiado corta (minimo 128 bits).")
+        return {
+            "test": "Racha más larga",
+            "error": "La secuencia es demasiado corta (minimo 128 bits)."
+        }
     elif longitud < 6272:
        longitud_bloque, K = 8, 3
        numero_bloques = longitud // longitud_bloque
@@ -241,12 +250,15 @@ def test_entropia(secuencia: list[int], m: int = 2) -> dict:
     }
 
 
-def linear_complexity_test(secuencia: list[int], M: int = 500) -> dict:
+def test_complejidad_lineal(secuencia: list[int], M: int = 500) -> dict:
     longitud = len(secuencia)
     num_bloques = longitud // M 
 
     if num_bloques == 0:
-        raise ValueError("Secuencia demasiado corta.")
+        return {
+            "test": "Complejidad lineal",
+            "error": "Secuencia demasiado corta."
+        }
 
     mu = M / 2.0 + (9 + (-1) ** (M + 1)) / 36.0 - (M / 3.0 + 2 / 9.0) / (2 ** M)
 
@@ -254,10 +266,10 @@ def linear_complexity_test(secuencia: list[int], M: int = 500) -> dict:
     val = [0] * (cat + 1)
     complejidades = []
 
-    for i in range(N):
+    for i in range(num_bloques):
         bloque = secuencia[i * M: (i + 1) * M]
         res = berlekamp_massey(bloque)
-        CL = res["linear_complexity"]
+        CL = res["complejidad_lineal"]
         complejidades.append(CL)
 
         T = (-1) ** M * (CL - mu) + 2 / 9.0
@@ -324,5 +336,5 @@ if __name__ == "__main__":
     resultado = test_entropia(secuencia, m=2)
     print(resultado)
 
-    resultado = linear_complexity_test(secuencia, M=5)
+    resultado = test_complejidad_lineal(secuencia, M=5)
     print(resultado)
