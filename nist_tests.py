@@ -42,7 +42,7 @@ def _igamc(a: float, x: float) -> float:
 def test_de_frecuencia(secuentia: list[int]) -> dict:
     longitud = len(secuentia)
 
-    S = sum(3 * (2 * bit - 1) for bit in secuentia)
+    S = sum((2 * bit - 1) for bit in secuentia)
     S_obs = abs(S) / math.sqrt(longitud)
     p_valor = math.erfc(S_obs / math.sqrt(2))
 
@@ -155,8 +155,8 @@ def test_de_racha_mas_larga(secuencia: list[int]) -> dict:
             else:
                 racha_actual = 0
         
-        # Clasificaciones en 
-        index = racha_maxima - rachas
+        # Clasificación según la longitud de la racha más larga
+        index = racha_maxima - v_offset
 
         if index < 0:
             index = 0

@@ -52,7 +52,7 @@ def postulados_golomb(secuencia: list[int], longitud: int = None) -> dict:
     bool_distribucion = True
 
     for k in range(1, longitud):
-        rachas_esperadas = 2 ** (longitud - k - 1) if k <= longitud - 2 else 1
+        rachas_esperadas = 2 ** (longitud - k - 2) if k <= longitud - 2 else 1
         unos = racha_unos.get(k, 0)
         ceros = racha_ceros.get(k, 0)
 
@@ -83,11 +83,11 @@ def postulados_golomb(secuencia: list[int], longitud: int = None) -> dict:
 
     # Tercer postulado: autocorrelación
     valores_coincidentes = []
-    secuencia_copia = [2 ** n - 1 for n in secuencia]
+    secuencia_copia = [((2 * n) - 1) for n in secuencia]
 
     for k in range(periodo):
         correlacion = sum(
-            secuencia_copia[i] * secuencia[(i + k) % periodo] for i in range(periodo) 
+            secuencia_copia[i] * secuencia_copia[(i + k) % periodo] for i in range(periodo) 
         )
         valores_coincidentes.append(correlacion)
 
