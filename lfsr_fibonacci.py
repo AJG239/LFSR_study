@@ -28,12 +28,12 @@ class LFSR_Fibonacci:
         output_bit = self.estado[-1]
 
         # El elemento x^0 (XOR de los bits en las posiciones de los frames)
-        constante = self.estado[-1] 
+        feedback = self.estado[-1] 
         for frame in self.frames:
-            constante ^= self.estado[self.n - 1 - frame]  # XOR con los bits correspondientes a los frames
+            feedback ^= self.estado[self.n - 1 - frame]  # XOR con los bits correspondientes a los frames
 
         # Desplazamos el estado a la derecha
-        self.estado = [constante] + self.estado[:-1]
+        self.estado = [feedback] + self.estado[:-1]
     
         return output_bit
 

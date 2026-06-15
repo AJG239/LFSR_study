@@ -32,8 +32,8 @@ class LFSR_Galois:
 
         # Si el bit de salida es 1, aplicar XOR en las posiciones tap
         if output_bit == 1:
-            for frame in self.frames:
-                nuevo_estado[self.n - frame] ^= 1
+            for tap in self.frames:
+                nuevo_estado[self.n - tap] ^= 1
 
         # Actualizamos el estado
         self.estado = nuevo_estado
