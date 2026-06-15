@@ -8,36 +8,15 @@ ALPHA = 0.01  # Nivel de significancia
 def _igamc(a: float, x: float) -> float:
     if x <= 0:
         return 1.0
-    if x < a + 1:
-        # Serie
-        term = 1.0 / a
-        total = term
-        for n in range(1, 300):
-            term *= x / (a + n)
-            total += term
-            if abs(term) < 1e-12 * abs(total):
-                break
-        return 1.0 - total * math.exp(-x + a * math.log(x) - math.lgamma(a))
-    else:
-        f = 1e-30
-        C = f
-        D = 1.0 / (x + 1 - a)
-        f = C * D
-        for n in range(1, 300):
-            an = n * (a - n)
-            bn = x + 2 * n + 1 - a
-            D = bn + an * D
-            if abs(D) < 1e-30:
-                D = 1e-30
-            C = bn + an / C
-            if abs(C) < 1e-30:
-                C = 1e-30
-            D = 1.0 / D
-            delta = C * D
-            f *= delta
-            if abs(delta - 1.0) < 1e-12:
-                break
-        return f * math.exp(-x + a * math.log(x) - math.lgamma(a))
+    term = 1.0 / a
+    total = term
+    for n in range(1, 2000):
+        term *= x / (a + n)
+        total += term
+        if abs(term) < 1e-15 * abs(total):
+            break
+    p = total * math.exp(-x + a * math.log(x) - math.lgamma(a))
+    return max(0.0, 1.0 - p)
 
 def test_de_frecuencia(secuentia: list[int]) -> dict:
     longitud = len(secuentia)

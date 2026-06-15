@@ -3,6 +3,7 @@ from lfsr_galois import LFSR_Galois
 from berlekamp_massey import berlekamp_massey
 from generador_combinado import generador_combinacional
 from propiedades_golomb import postulados_golomb
+from a51 import A51
 from nist_tests import test_de_frecuencia, test_de_frecuencia_por_bloques, test_rachas, test_de_racha_mas_larga, test_serial, test_entropia, test_complejidad_lineal
 
 def run_nist_tests(secuencia, label):
@@ -52,6 +53,21 @@ def main():
         [1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0],
     ).generar_secuencia(2000)
     run_nist_tests(seq_nist, 'LFSR simple')
+
+    # --- A5/1: Berlekamp-Massey y NIST sobre su salida ---
+    clave = 0x123456789ABCDEF0
+    frame = 0
+    cifrador = A51(clave=clave, frame=frame)
+
+    seq_a51_bm = cifrador.generar(2000)
+    bm_a51 = berlekamp_massey(seq_a51_bm)
+    cota = (2**19 - 1) + (2**22 - 1) + (2**23 - 1)
+    print('A5/1 CL estimada (2000 bits):', bm_a51['complejidad_lineal'],
+          f'(cota teorica {cota:,})')
+
+    cifrador = A51(clave=clave, frame=frame)
+    seq_a51_nist = cifrador.generar(20000)
+    run_nist_tests(seq_a51_nist, 'A5/1')
 
 
 if __name__ == '__main__':
